@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HeroModel } from '../../models/hero.model';
 import { NgForm } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { HeroesService } from '../../services/heroes.service';
 import Swal from 'sweetalert2';
 import { Observable } from 'rxjs';
@@ -14,9 +15,20 @@ export class HeroComponent implements OnInit {
 
   hero: HeroModel = new HeroModel();
 
-  constructor(private heroesService: HeroesService) { }
+  constructor(private heroesService: HeroesService,
+    private route: ActivatedRoute) { }
 
   ngOnInit() {
+    const idHero = this.route.snapshot.paramMap.get('id');
+
+    if (idHero !== 'nuevo') {
+
+      this.heroesService.getHero(idHero).subscribe((response: HeroModel) => {
+        this.hero = response;
+        this.hero.id = idHero;
+      });
+    }
+
   }
 
   save(form: NgForm) {
